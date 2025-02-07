@@ -1,0 +1,19 @@
+---
+- name: installation de apache
+  apt:
+   name: apache2
+   update_cache: yes
+   state: latest
+
+- name: installation de MariaDB
+  apt:
+   name: mariadb-server
+   update_cache: yes
+   state: present
+
+- name: installation PyMySQL
+  pip:
+   name: PyMySQL
+   state: present
+
+# tasks file for installation_logiciel
