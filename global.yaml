@@ -1,0 +1,5 @@
+- name: installation
+  become: yes
+  hosts: machine
+  roles:
+   - installation_logiciel
