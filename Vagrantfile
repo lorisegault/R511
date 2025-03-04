@@ -14,7 +14,7 @@ Vagrant.configure("2") do |config|
    sudo apt update && sudo apt install -y ansible git
    git clone https://github.com/lorisegault/R511.git
    cd R511
-   ansible-playbook global.yaml -i "localhost
+   ansible-playbook global.yaml -i "localhost"
   SHELL
   config.vm.provision "shell", inline: $playbook
   end
