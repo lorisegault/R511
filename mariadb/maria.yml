@@ -1,0 +1,21 @@
+- hosts: maria
+  become: yes
+  tasks:
+   - name: installation de MariaDB
+     apt:
+      name: mariadb-server
+      update_cache: yes
+      state: present
+
+   - name: installation PyMySQL
+     pip:
+      name: PyMySQL
+      state: present
+
+
+   - name: conf acces root 
+     mysql_user:
+      name: user
+      password: "bonjour"
+      host: "localhost"
+      state: present
