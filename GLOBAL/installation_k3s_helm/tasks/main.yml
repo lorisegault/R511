@@ -1,0 +1,60 @@
+- name: Installer K3s sur le master
+  ansible.builtin.shell: |
+    curl -sfL https://get.k3s.io | K3S_VERSION="v1.30.10+k3s1" sh -
+  become: yes
+  when:
+    - inventory_hostname in groups["master"]
+
+- name: Récupérer le token K3s
+  ansible.builtin.shell: cat /var/lib/rancher/k3s/server/node-token
+  register: k3s_token_output
+  when: "'master' in group_names"
+
+- name: Définir le token K3s
+  set_fact:
+    k3s_token: "{{ k3s_token_output.stdout }}"
+  when: "'master' in group_names"
+
+- name: Installer K3s sur le worker
+  ansible.builtin.shell: |
+    curl -sfL https://get.k3s.io | K3S_URL=https://{{ hostvars[groups['master'][0]]['ansible_host'] }}:6443 K3S_TOKEN={{ hostvars[groups['master'][0]]['k3s_token'] }} sh -
+  become: yes
+  when: "'worker' in group_names"
+
+- name: Vérifier l'installation de K3s
+  command: k3s --version
+  register: result_k3s
+
+- name: Debug k3s
+  debug:
+    var: result_k3s.stdout_lines
+
+- name: Télécharger l'archive de Helm
+  get_url:
+    url: "https://get.helm.sh/helm-v3.9.1-linux-amd64.tar.gz"
+    dest: "/tmp/helm.tar.gz"
+
+- name: Extraire l'archive de Helm
+  unarchive:
+    src: "/tmp/helm.tar.gz"
+    dest: "/tmp/"
+    remote_src: yes
+
+- name: Déplacer le binaire de Helm dans /usr/local/bin
+  command: mv /tmp/linux-amd64/helm /usr/local/bin/helm
+
+- name: Supprimer l'archive téléchargée et le dossier extrait
+  file:
+    path: "/tmp/{{ item }}"
+    state: absent
+  loop:
+    - helm.tar.gz
+    - linux-amd64
+
+- name: Vérification installation helm
+  command: "helm version"
+  register: result_helm
+
+- name: Debug helm
+  debug:
+    var: result_helm.stdout_lines

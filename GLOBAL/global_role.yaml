@@ -1,0 +1,5 @@
+- name: installation
+  become: yes
+  hosts: all
+  roles:
+   - installation_k3s_helm

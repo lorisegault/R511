@@ -1,0 +1,21 @@
+all:
+  children:
+    allservers:
+      hosts:
+        172.18.50.132:
+          ansible_host: 172.18.50.132
+          ansible_user: user
+          ansible_ssh_pass: bonjour
+        172.18.50.133:
+          ansible_host: 172.18.50.133
+          ansible_user: user
+          ansible_ssh_pass: bonjour
+
+    master:
+      hosts:
+        172.18.50.132:
+
+    worker:
+      hosts:
+        172.18.50.133:
+

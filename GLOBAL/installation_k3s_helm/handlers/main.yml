@@ -1,0 +1,7 @@
+---
+# handlers file for installation_k3s_helm/
+- name: Redémarrer K3s
+  ansible.builtin.systemd:
+    name: k3s
+    state: restarted
+  become: yes
